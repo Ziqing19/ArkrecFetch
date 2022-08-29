@@ -11,6 +11,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// const root = path.join(__dirname, "frontend/build");
+// app.get("/", async (req, res) => {
+//   res.sendFile("index.html", { root });
+// });
 app.use("/", indexRouter);
+
+const { createProxyMiddleware } = require('http-proxy-middleware');
+app.use('*',  createProxyMiddleware({target: 'http://159.75.118.88'}));
 
 module.exports = app;

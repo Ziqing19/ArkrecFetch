@@ -3,7 +3,7 @@ const router = express.Router();
 const fetch = require("node-fetch");
 
 /* GET home page. */
-router.get("/", function (req, res) {
+router.get("/test", function (req, res) {
   console.log(
     new Date(
     (-480 + new Date().getTimezoneOffset()) * 60000 + new Date().getTime()
