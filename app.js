@@ -18,6 +18,6 @@ app.use(cookieParser());
 app.use("/", indexRouter);
 
 const { createProxyMiddleware } = require('http-proxy-middleware');
-app.use('*',  createProxyMiddleware({target: 'http://159.75.118.88'}));
+app.use('*',  createProxyMiddleware({target: 'https://arkrec.com', secure: false}));
 
 module.exports = app;
