@@ -37,4 +37,65 @@ router.post("/fetch-url", async (req, res) => {
   }
 });
 
+async function sendSystemMessage(message, attachment) {
+  await fetch("https://arkrec.com/api/send-system-message", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message,attachment }),
+    }
+  )
+}
+
+router.post("/webhook/push", async (req,res) => {
+  try {
+    res.sendStatus(200);
+    const host =
+      "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/";
+    const hostEN = host.replace("zh_CN", "en_US");
+    const hostJP = host.replace("zh_CN", "ja_JP");
+    const characterTableEN = await (
+      await fetch(hostEN + "character_table.json")
+    ).json();
+    const characterTableJP = await (
+      await fetch(hostJP + "character_table.json")
+    ).json();
+    const uniEquipEN = await (
+      await fetch(hostEN + "uniequip_table.json")
+    ).json();
+    const uniEquipJP = await (
+      await fetch(hostJP + "uniequip_table.json")
+    ).json();
+    const stageTableEN = await (
+      await fetch(hostEN + "stage_table.json")
+    ).json();
+    const storyReviewTableEN = await (
+      await fetch(hostEN + "story_review_table.json")
+    ).json();
+    const stageTableJP = await (
+      await fetch(hostJP + "stage_table.json")
+    ).json();
+    const storyReviewTableJP = await (
+      await fetch(hostJP + "story_review_table.json")
+    ).json();
+    const data = {
+      characterTableEN,
+      characterTableJP,
+      uniEquipEN,
+      uniEquipJP,
+      stageTableEN,
+      stageTableJP,
+      storyReviewTableEN,
+      storyReviewTableJP,
+    };
+    await fetch("https://arkrec.com/game/update-foreign-game-data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+    await sendSystemMessage(`外服数据已更新\n更新时间：${new Date().toISOString()}`, req.body);
+  } catch (err) {
+    await sendSystemMessage(`外服数据更新失败\n更新时间：${new Date().toISOString()}\n${err.name} ${err.message}\n${err.stack}`,err);
+  }
+});
+
 module.exports = router;
