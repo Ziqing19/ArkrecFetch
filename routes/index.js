@@ -38,9 +38,7 @@ router.get("/test", async (req, res) => {
 router.post("/webhook/push", async (req,res) => {
   try {
     console.log("Receive webhook push");
-    console.log("Sending...");
-    console.log(req.body);
-    await sendSystemMessage(`更新外服数据\n更新时间：${new Date().toISOString()}`, { message: "test" });
+    await sendSystemMessage(`更新外服数据\n更新时间：${new Date().toISOString()}`, req.body);
     console.log("Sent");
     res.sendStatus(200);
     const host =
