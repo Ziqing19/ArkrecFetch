@@ -32,7 +32,7 @@ router.post("/webhook/push", async (req, res) => {
   try {
     console.log("Receive webhook push");
     const files = [
-      ...req.body["head_commit"]["add"],
+      ...req.body["head_commit"]["added"],
       ...req.body["head_commit"]["modified"],
     ];
     if (!files.find((file) => file.match(/^(en_US)|(ja_JP)/))) {
