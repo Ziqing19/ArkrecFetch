@@ -48,7 +48,8 @@ async function sendSystemMessage(message, attachment) {
 
 router.post("/webhook/push", async (req,res) => {
   try {
-    console.log("Receive webhook push")
+    console.log("Receive webhook push");
+    res.sendStatus(200);
     const host =
       "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/";
     const hostEN = host.replace("zh_CN", "en_US");
@@ -93,7 +94,6 @@ router.post("/webhook/push", async (req,res) => {
       body: JSON.stringify(data),
     })
     await sendSystemMessage(`外服数据已更新\n更新时间：${new Date().toISOString()}`, req.body);
-    res.sendStatus(200);
   } catch (err) {
     await sendSystemMessage(`外服数据更新失败\n更新时间：${new Date().toISOString()}\n${err.name} ${err.message}\n${err.stack}`,err);
     console.log(err)
