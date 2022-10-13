@@ -37,9 +37,18 @@ router.post("/fetch-url", async (req, res) => {
   }
 });
 
-router.get("/foreign-game-data", async (req,res) => {
+async function sendSystemMessage(message, attachment) {
+  await fetch("https://arkrec.com/api/send-system-message", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message,attachment }),
+    }
+  )
+}
+
+router.post("/webhook/push", async (req,res) => {
   try {
-    console.log("Fetching foreign game data");
+    console.log("Receive webhook push")
     const host =
       "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/";
     const hostEN = host.replace("zh_CN", "en_US");
@@ -78,8 +87,15 @@ router.get("/foreign-game-data", async (req,res) => {
       storyReviewTableEN,
       storyReviewTableJP,
     };
-    res.send(data);
+    await fetch("https://arkrec.com/game/update-foreign-game-data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+    await sendSystemMessage(`外服数据已更新\n更新时间：${new Date().toISOString()}`, req.body);
+    res.sendStatus(200);
   } catch (err) {
+    await sendSystemMessage(`外服数据更新失败\n更新时间：${new Date().toISOString()}\n${err.name} ${err.message}\n${err.stack}`,err);
     console.log(err)
     res.status(400).send(err.message);
   }
