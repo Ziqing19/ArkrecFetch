@@ -2,23 +2,6 @@ const express = require("express");
 const router = express.Router();
 const fetch = require("node-fetch");
 
-/* GET home page. */
-router.get("/test", function (req, res) {
-  console.log(
-    new Date(
-    (-480 + new Date().getTimezoneOffset()) * 60000 + new Date().getTime()
-    ).toLocaleString("zh-CN", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    }))
-  res.status(200).send("This is the fetch server of arkrec");
-});
-
 router.post("/fetch-url", async (req, res) => {
   try {
     if (req.body.url === undefined) return res.sendStatus(400);
@@ -51,7 +34,8 @@ router.post("/webhook/push", async (req,res) => {
     console.log("Receive webhook push");
     res.sendStatus(200);
     console.log("Sending...");
-    await sendSystemMessage(`更新外服数据\n更新时间：${new Date().toISOString()}`, req.body);
+    console.log(req.body)
+    await sendSystemMessage(`更新外服数据\n更新时间：${new Date().toISOString()}`, { message: "test" });
     console.log("Sent");
     const host =
       "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/";
@@ -112,6 +96,22 @@ router.post("/webhook/push", async (req,res) => {
     console.log(err)
     res.status(400).send(err.message);
   }
+});
+
+router.get("/", function (req, res) {
+  console.log(
+    new Date(
+      (-480 + new Date().getTimezoneOffset()) * 60000 + new Date().getTime()
+    ).toLocaleString("zh-CN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }))
+  res.status(200).send("This is the fetch server of arkrec");
 });
 
 module.exports = router;
