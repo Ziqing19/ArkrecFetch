@@ -50,6 +50,7 @@ router.post("/webhook/push", async (req,res) => {
   try {
     console.log("Receive webhook push");
     res.sendStatus(200);
+    await sendSystemMessage(`更新外服数据\n更新时间：${new Date().toISOString()}`, req.body);
     const host =
       "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/";
     const hostEN = host.replace("zh_CN", "en_US");
@@ -78,6 +79,12 @@ router.post("/webhook/push", async (req,res) => {
     const storyReviewTableJP = await (
       await fetch(hostJP + "story_review_table.json")
     ).json();
+    const handbookInfoTableEN = await (
+      await fetch(hostEN + "handbook_info_table.json")
+    ).json();
+    const handbookInfoTableJP = await (
+      await fetch(hostJP + "handbook_info_table.json")
+    ).json();
     const data = {
       characterTableEN,
       characterTableJP,
@@ -87,13 +94,16 @@ router.post("/webhook/push", async (req,res) => {
       stageTableJP,
       storyReviewTableEN,
       storyReviewTableJP,
+      handbookInfoTableEN,
+      handbookInfoTableJP
     };
+    console.log("开始更新");
     await fetch("https://arkrec.com/game/update-foreign-game-data", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
-    await sendSystemMessage(`外服数据已更新\n更新时间：${new Date().toISOString()}`, req.body);
+    console.log("更新完成");
   } catch (err) {
     await sendSystemMessage(`外服数据更新失败\n更新时间：${new Date().toISOString()}\n${err.name} ${err.message}\n${err.stack}`,err);
     console.log(err)
