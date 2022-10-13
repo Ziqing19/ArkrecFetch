@@ -38,11 +38,11 @@ router.get("/test", async (req, res) => {
 router.post("/webhook/push", async (req,res) => {
   try {
     console.log("Receive webhook push");
-    res.sendStatus(200);
     console.log("Sending...");
     console.log(req.body);
     await sendSystemMessage(`更新外服数据\n更新时间：${new Date().toISOString()}`, { message: "test" });
     console.log("Sent");
+    res.sendStatus(200);
     const host =
       "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/";
     const hostEN = host.replace("zh_CN", "en_US");
