@@ -11,8 +11,8 @@ router.post("/fetch-url", async (req, res) => {
       return res.status(resRaw.status).send(resRaw.statusText);
     } else {
       const text = await resRaw.text();
-      console.log("Res length", text.length)
-      res.send(text)
+      console.log("Res length", text.length);
+      res.send(text);
     }
   } catch (err) {
     console.log(err);
@@ -25,13 +25,20 @@ async function sendSystemMessage(message, attachment) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message, attachment }),
-    }
-  )
+  });
 }
 
-router.post("/webhook/push", async (req,res) => {
+router.post("/webhook/push", async (req, res) => {
   try {
     console.log("Receive webhook push");
+    const files = [
+      ...req.body["head_commit"]["add"],
+      ...req.body["head_commit"]["modified"],
+    ];
+    if (!files.find((file) => file.match(/^(en_US)|(ja_JP)/))) {
+      console.log("No foreign data updated, aborted");
+      return res.sendStatus(200);
+    }
     const host =
       "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/";
     const hostEN = host.replace("zh_CN", "en_US");
@@ -76,21 +83,29 @@ router.post("/webhook/push", async (req,res) => {
       storyReviewTableEN,
       storyReviewTableJP,
       handbookInfoTableEN,
-      handbookInfoTableJP
+      handbookInfoTableJP,
     };
     console.log("Start updating...");
     await fetch("https://arkrec.com/game/update-foreign-game-data", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    })
+    });
     console.log("Updated");
-    await sendSystemMessage(`更新外服数据\n更新时间：${new Date().toISOString()}`, req.body);
+    await sendSystemMessage(
+      `更新外服数据\n更新时间：${new Date().toISOString()}`,
+      req.body
+    );
     console.log("Sent");
     res.sendStatus(200);
   } catch (err) {
-    await sendSystemMessage(`外服数据更新失败\n更新时间：${new Date().toISOString()}\n${err.name} ${err.message}\n${err.stack}`,err);
-    console.log(err)
+    await sendSystemMessage(
+      `外服数据更新失败\n更新时间：${new Date().toISOString()}\n${err.name} ${
+        err.message
+      }\n${err.stack}`,
+      err
+    );
+    console.log(err);
     res.status(400).send(err.message);
   }
 });
@@ -107,7 +122,8 @@ router.get("/", function (req, res) {
       minute: "2-digit",
       second: "2-digit",
       hour12: false,
-    }))
+    })
+  );
   res.status(200).send("This is the fetch server of arkrec");
 });
 
