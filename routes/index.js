@@ -35,7 +35,7 @@ router.post("/webhook/push", async (req, res) => {
       ...req.body["head_commit"]["added"],
       ...req.body["head_commit"]["modified"],
     ];
-    if (!files.find((file) => file.match(/^(en_US)|(ja_JP)/))) {
+    if (!files.find((file) => file.match(/^(en_US\/gamedata\/excel)|(ja_JP\/gamedata\/excel)/))) {
       console.log("No foreign data updated, aborted");
       return res.sendStatus(200);
     }
