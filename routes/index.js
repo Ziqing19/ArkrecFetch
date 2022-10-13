@@ -24,17 +24,23 @@ async function sendSystemMessage(message, attachment) {
   await fetch("https://arkrec.com/api/send-system-message", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message,attachment }),
+    body: JSON.stringify({ message, attachment }),
     }
   )
 }
+
+router.get("/test", async (req, res) => {
+  await sendSystemMessage("TEST",{msg:"test"});
+  console.log("Sent");
+  res.sendStatus(200);
+})
 
 router.post("/webhook/push", async (req,res) => {
   try {
     console.log("Receive webhook push");
     res.sendStatus(200);
     console.log("Sending...");
-    console.log(req.body)
+    console.log(req.body);
     await sendSystemMessage(`更新外服数据\n更新时间：${new Date().toISOString()}`, { message: "test" });
     console.log("Sent");
     const host =
