@@ -50,7 +50,9 @@ router.post("/webhook/push", async (req,res) => {
   try {
     console.log("Receive webhook push");
     res.sendStatus(200);
+    console.log("Sending...");
     await sendSystemMessage(`更新外服数据\n更新时间：${new Date().toISOString()}`, req.body);
+    console.log("Sent");
     const host =
       "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/";
     const hostEN = host.replace("zh_CN", "en_US");
@@ -61,6 +63,7 @@ router.post("/webhook/push", async (req,res) => {
     const characterTableJP = await (
       await fetch(hostJP + "character_table.json")
     ).json();
+    console.log("Character table done");
     const uniEquipEN = await (
       await fetch(hostEN + "uniequip_table.json")
     ).json();
